@@ -43,7 +43,7 @@ jobs:
         -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
     - name: Install tools
-      run: sudo apt update && sudo apt install fio sysbench
+      run: sudo apt update && sudo apt install fio sysbench speedtest-cli
 
     - name: Print Info
       run: |
@@ -74,6 +74,8 @@ jobs:
          --iodepth=256 --runtime=30 --numjobs=4 --time_based --group_reporting \
          --name=iops-test-job --eta-newline=1
 
+    - name: Network Perf
+      run: speedtest-cli
 
     - name: Build
       run: cmake --build ${{ github.workspace }}/build --preset ${{ matrix.preset }} --config ${{ matrix.build_type }}
