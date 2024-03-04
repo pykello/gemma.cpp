@@ -42,6 +42,11 @@ jobs:
         -D CMAKE_C_COMPILER_LAUNCHER=ccache
         -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
+    - name: Print Info
+      run: |
+        cat /proc/cpuinfo
+        free -mh
+
     - name: Build
       run: cmake --build ${{ github.workspace }}/build --preset ${{ matrix.preset }} --config ${{ matrix.build_type }}
 
