@@ -1,0 +1,56 @@
+name: build-ubicloud
+
+# Trigger on push, pull request, or via manual dispatch.
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} (${{ matrix.preset }}) ${{ matrix.build_type }}
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubicloud-standard-4']
+        build_type: ['Release']
+        preset: ['make', 'windows']
+        exclude:
+          - os: ubicloud-standard-4
+            preset: windows
+          - os: macos-latest
+            preset: windows
+          - os: windows-latest
+            preset: make
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.preset }}-${{ matrix.build_type }}
+      cancel-in-progress: true
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Set up ccache
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+
+    - name: Configure CMake
+      run: >
+        cmake --preset ${{ matrix.preset }}
+        -S ${{ github.workspace }} -B ${{ github.workspace }}/build
+        -D CMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -D CMAKE_C_COMPILER_LAUNCHER=ccache
+        -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+    - name: Build
+      run: cmake --build ${{ github.workspace }}/build --preset ${{ matrix.preset }} --config ${{ matrix.build_type }}
+
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: gemma-${{ matrix.os }}-${{ matrix.preset }}-${{ matrix.build_type }}
+        path: |
+          ${{ github.workspace }}/build/${{ matrix.build_type }}/gemma.exe
+          ${{ github.workspace }}/build/${{ matrix.build_type }}/libgemma.lib
+          ${{ github.workspace }}/build/gemma
+          ${{ github.workspace }}/build/libgemma.a
