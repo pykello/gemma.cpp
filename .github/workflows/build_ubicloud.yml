@@ -41,7 +41,9 @@ jobs:
         -D CMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -D CMAKE_C_COMPILER_LAUNCHER=ccache
         -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
-     run: sudo apt update && sudo apt install fio sysbench
+
+    - name: Install tools
+      run: sudo apt update && sudo apt install fio sysbench
 
     - name: Print Info
       run: |
