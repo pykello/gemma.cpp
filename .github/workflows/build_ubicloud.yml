@@ -41,11 +41,37 @@ jobs:
         -D CMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -D CMAKE_C_COMPILER_LAUNCHER=ccache
         -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+     run: sudo apt update && sudo apt install fio sysbench
 
     - name: Print Info
       run: |
         cat /proc/cpuinfo
         free -mh
+
+    - name: CPU benchmark
+      run: sysbench cpu --cpu-max-prime=10000 run
+
+    - name: Memory benchmark
+      run: sysbench memory --memory-total-size=2G --memory-oper=read --memory-access-mode=rnd --threads=4 run
+
+    - name: Disk Write Perf
+      run: |
+        sudo fio --filename=./f --size=2GB --direct=1 --rw=randwrite --bs=4k --ioengine=libaio \
+         --iodepth=256 --runtime=30 --numjobs=4 --time_based --group_reporting \
+         --name=iops-test-job --eta-newline=1
+
+    - name: Disk Write Perf
+      run: |
+        sudo fio --filename=./f --size=2GB --direct=1 --rw=randwrite --bs=4k --ioengine=libaio \
+         --iodepth=256 --runtime=30 --numjobs=4 --time_based --group_reporting \
+         --name=iops-test-job --eta-newline=1
+
+    - name: Disk Read Perf
+      run: |
+        sudo fio --filename=./f --size=2GB --direct=1 --rw=randread --bs=4k --ioengine=libaio \
+         --iodepth=256 --runtime=30 --numjobs=4 --time_based --group_reporting \
+         --name=iops-test-job --eta-newline=1
+
 
     - name: Build
       run: cmake --build ${{ github.workspace }}/build --preset ${{ matrix.preset }} --config ${{ matrix.build_type }}
