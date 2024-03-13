@@ -52,7 +52,7 @@ jobs:
         lsblk
 
     - name: Fsck
-      run: sudo fsck -nf /dev/sda1
+      run: sudo fsck -nf /dev/vda1
 
     - name: CPU benchmark
       run: sysbench cpu --cpu-max-prime=10000 run
