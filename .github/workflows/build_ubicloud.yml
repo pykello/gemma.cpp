@@ -51,7 +51,7 @@ jobs:
         free -mh
 
     - name: Fsck
-      run: sudo fsck -A
+      run: sudo fsck -nf /dev/sda1
 
     - name: CPU benchmark
       run: sysbench cpu --cpu-max-prime=10000 run
