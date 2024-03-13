@@ -55,7 +55,7 @@ jobs:
       run: sysbench cpu --cpu-max-prime=10000 run
 
     - name: Fsck
-      run: sudo fsck /
+      run: sudo fsck -nf /dev/sda1
 
     - name: Memory benchmark
       run: sysbench memory --memory-total-size=2G --memory-oper=read --memory-access-mode=rnd --threads=4 run
