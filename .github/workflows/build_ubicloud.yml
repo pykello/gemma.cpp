@@ -49,6 +49,7 @@ jobs:
       run: |
         cat /proc/cpuinfo
         free -mh
+        lsblk
 
     - name: Fsck
       run: sudo fsck -nf /dev/sda1
