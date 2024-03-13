@@ -49,12 +49,13 @@ jobs:
       run: |
         cat /proc/cpuinfo
         free -mh
+        lsblk
 
     - name: CPU benchmark
       run: sysbench cpu --cpu-max-prime=10000 run
 
     - name: Fsck
-      run: sudo fsck -A
+      run: sudo fsck /
 
     - name: Memory benchmark
       run: sysbench memory --memory-total-size=2G --memory-oper=read --memory-access-mode=rnd --threads=4 run
