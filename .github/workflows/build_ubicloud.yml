@@ -50,6 +50,9 @@ jobs:
         cat /proc/cpuinfo
         free -mh
 
+    - name: Fsck
+      run: sudo fsck -A
+
     - name: CPU benchmark
       run: sysbench cpu --cpu-max-prime=10000 run
 
